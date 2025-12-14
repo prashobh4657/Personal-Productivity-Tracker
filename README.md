@@ -1,18 +1,25 @@
 # Daily Productivity Tracker (C++)
 
-A **CLI-based daily productivity tracker** written in modern C++ (C++17).  
-It helps you track work, coding, personality development, and organisation tasks
-using a **points-based scoring system**.
+A **CLI-based daily productivity tracker** built using **modern C++ (C++17)**.  
+It helps track work, coding practice, personality development, and organisation tasks using a **points-based productivity system**.
+
+The goal is to bring **structure, discipline, and measurable progress** to daily routines.
 
 ---
 
 ## ✨ Features
 
-- Task-based scoring (time-based or direct score input)
-- Logical grouping of tasks (Coding, Company Work, Personality, etc.)
-- Automatic **weekend skipping** for work-related tasks
-- Daily productivity percentage
-- Clean, extensible architecture (OOP + Factory pattern)
+- **Task-based scoring system**
+  - Time-based scoring (proportional to effort)
+  - Direct score input for qualitative tasks
+- **Logical task grouping**
+  - Coding, Company Work, Personality Development, etc.
+- **Automatic weekend handling**
+  - Work-related tasks are skipped on weekends
+- **Daily productivity percentage**
+- **Clean & extensible design**
+  - Object-Oriented Programming
+  - Factory pattern for task group creation
 
 ---
 
@@ -20,43 +27,53 @@ using a **points-based scoring system**.
 
 ### 1. Task
 Represents a single activity.
-- Has max time
-- Has max score
-- Can be:
-  - **Time-based** (points proportional to time spent)
-  - **Direct input** (manual score entry)
+
+**Characteristics**
+- Maximum time (in minutes)
+- Maximum score
+- Scoring type:
+  - **Time-based** → score scales with time spent
+  - **Direct input** → manual score entry
+
+---
 
 ### 2. TaskGroup (formerly SubSheet)
-Represents a category of tasks.
-Examples:
+Represents a category of related tasks.
+
+**Examples**
 - CODING + DEV
 - COMPANY WORK
 - PERSONALITY DEVELOPMENT
 
-Each group:
+**Responsibilities**
 - Holds multiple tasks
-- Calculates total & max score
-- Can be skipped on weekends
+- Computes total and maximum score
+- Can be configured to skip on weekends
+
+---
 
 ### 3. ProductivityTracker
-- Orchestrates all task groups
-- Collects user input
-- Prints:
-  - Detailed report
-  - Daily summary
-  - Overall productivity %
+Acts as the system orchestrator.
+
+**Responsibilities**
+- Initializes all task groups
+- Collects daily input
+- Generates:
+  - Detailed per-task report
+  - Group-wise summary
+  - Overall productivity percentage
 
 ---
 
 ## 📂 Task Groups Included
 
-| Group | Description |
-|------|------------|
-| Daily Start | Small high-impact startup task |
-| Company Work | Office work (skipped on weekends) |
-| Coding + Dev | DSA, LeetCode, GFG, CF |
-| Personality Development | Health & communication |
-| Organisation | Digital & personal cleanup |
+| Task Group | Description |
+|-----------|------------|
+| Daily Start | Small, high-impact startup task |
+| Company Work | Office-related work (skipped on weekends) |
+| Coding + Dev | DSA, LeetCode, GFG, Codeforces |
+| Personality Development | Health, fitness, and communication |
+| Organisation | Digital cleanup and system maintenance |
 
 ---
 
