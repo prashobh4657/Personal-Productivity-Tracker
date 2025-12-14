@@ -1,341 +1,296 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-class Constants {
+/* =========================
+   CONSTANT DEFINITIONS
+   ========================= */
+class AppConstants {
 public:
-    static inline const string REVISE_DOCUMENT = "REVISE DOCUMENT";
-    static inline const string COMPANY_WORK = "COMPANY WORK";
-    static inline const string GFG_DAILY_CHALLENGE = "GFG DAILY CHALLENGE";
-    static inline const string LEETCODE_DAILY_CHALLENGE = "LEETCODE DAILY CHALLENGE";
-    static inline const string REVISE_FINAL_450_SECTION = "REVISE FINAL-450 SECTION";
-    static inline const string CF_PROBLEM_SOLVING = "CF PROBLEM SOLVING";
-    static inline const string LEARN_ENGLISH = "LEARN ENGLISH";
-    static inline const string PUSHUPS = "PUSHUPS";
-    static inline const string WALKING = "WALKING";
-    static inline const string HANDWRITING = "HANDWRITING";
-    static inline const string UPDATE_SHEET = "UPDATE SHEET";
-    static inline const string LAPTOP = "LAPTOP";
-    static inline const string MOBILE = "MOBILE";
-    static inline const string DRIVE = "DRIVE";
-    static inline const string JEE = "JEE";
-    static inline const string EMAIL_IDS = "EMAIL IDs";
-    static inline const string SHEET_DAILY_START = string("DailyStartSubsheet");
-    static inline const string SHEET_COMPANY_WORK = string("COMPANYWORK");
-    static inline const string SHEET_ONE_TIME = string("ONE_TIME TASKS");
-    static inline const string SHEET_CODING = string("CODING + DEV");
-    static inline const string SHEET_PERSONALITY = string("PERSONALITY DEVELOPMENT");
-    static inline const string SHEET_ORGANISATION = string("ORGANISATION");
+    // Task Names
+    static inline const string TASK_REVISE_DOCUMENT = "REVISE DOCUMENT";
+    static inline const string TASK_COMPANY_WORK = "COMPANY WORK";
+    static inline const string TASK_GFG_DAILY = "GFG DAILY CHALLENGE";
+    static inline const string TASK_LEETCODE_DAILY = "LEETCODE DAILY CHALLENGE";
+    static inline const string TASK_FINAL_450 = "REVISE FINAL-450 SECTION";
+    static inline const string TASK_CODEFORCES = "CF PROBLEM SOLVING";
+    static inline const string TASK_LEARN_ENGLISH = "LEARN ENGLISH";
+    static inline const string TASK_PUSHUPS = "PUSHUPS";
+    static inline const string TASK_WALKING = "WALKING";
+    static inline const string TASK_HANDWRITING = "HANDWRITING";
+    static inline const string TASK_UPDATE_SHEET = "UPDATE SHEET";
+    static inline const string TASK_LAPTOP = "LAPTOP";
+    static inline const string TASK_MOBILE = "MOBILE";
+    static inline const string TASK_DRIVE = "DRIVE";
+    static inline const string TASK_JEE = "JEE";
+    static inline const string TASK_EMAIL_IDS = "EMAIL IDs";
+
+    // Sheet Names
+    static inline const string SHEET_DAILY_START = "DailyStartSubsheet";
+    static inline const string SHEET_COMPANY_WORK = "COMPANYWORK";
+    static inline const string SHEET_ONE_TIME = "ONE_TIME TASKS";
+    static inline const string SHEET_CODING = "CODING + DEV";
+    static inline const string SHEET_PERSONALITY = "PERSONALITY DEVELOPMENT";
+    static inline const string SHEET_ORGANISATION = "ORGANISATION";
 };
 
-class InputUtility {
+/* =========================
+   INPUT UTILITIES
+   ========================= */
+class InputReader {
 public:
-    static int readInt(const string& prompt, int minVal = INT_MIN, int maxVal = INT_MAX) {
+    static int readInt(const string &prompt, int minValue = INT_MIN, int maxValue = INT_MAX) {
         while (true) {
             cout << prompt;
-            int v;
-            if (cin >> v) {
-                string rest; getline(cin, rest);
-                if (v < minVal) v = minVal;
-                if (v > maxVal) v = maxVal;
-                return v;
+            int value;
+            if (cin >> value) {
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                return max(minValue, min(value, maxValue));
             }
-            cin.clear(); string junk; getline(cin, junk);
-            cout << "Invalid input, please enter an integer.\n";
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Invalid input. Enter an integer.\n";
         }
     }
 
-    static double readDouble(const string& prompt, double minVal = -numeric_limits<double>::infinity(), double maxVal = numeric_limits<double>::infinity()) {
+    static double readDouble(const string &prompt, double minValue, double maxValue) {
         while (true) {
             cout << prompt;
-            double v;
-            if (cin >> v) {
-                string rest; getline(cin, rest);
-                if (v < minVal) v = minVal;
-                if (v > maxVal) v = maxVal;
-                return v;
+            double value;
+            if (cin >> value) {
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                return max(minValue, min(value, maxValue));
             }
-            cin.clear(); string junk; getline(cin, junk);
-            cout << "Invalid input, please enter a number.\n";
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Invalid input. Enter a number.\n";
         }
     }
 };
 
-class TrackerUtility {
+/* =========================
+   DATE / TIME UTILITIES
+   ========================= */
+class DateUtils {
 public:
-    static bool todayIsWeekend() {
-        std::time_t t = std::time(nullptr);
-        std::tm *lt = std::localtime(&t);
-        int wday = lt->tm_wday;
-        return (wday == 0 || wday == 6);
+    static bool isWeekend() {
+        time_t now = time(nullptr);
+        tm *localTime = localtime(&now);
+        return localTime->tm_wday == 0 || localTime->tm_wday == 6;
     }
 };
 
+/* =========================
+   TASK MODEL
+   ========================= */
 class Task {
-    string name;
-    string description;
-    int maxTime;        
-    double maxPoints;
-    double todayPoints = 0.0;
-    bool directInput = false;
+private:
+    string taskName;
+    string taskDescription;
+    int maxMinutes;
+    double maxScore;
+    double todayScore;
+    bool isDirectScore;
 
 public:
-    Task(string name, int maxTime, double maxPoints, string description = "", bool directInput = false) {
-        this->name = name;
-        this->description = description;
-        this->maxTime = maxTime;
-        this->maxPoints = maxPoints;
-        this->todayPoints = 0.0;
-        this->directInput = directInput;
-    }
+    Task(string name, int maxTime, double maxPoints, string desc = "", bool direct = false)
+        : taskName(name), taskDescription(desc), maxMinutes(maxTime),
+          maxScore(maxPoints), todayScore(0.0), isDirectScore(direct) {}
 
-    void collectTodayInput() {
-        if (directInput) {
-            double pts = InputUtility::readDouble("  Points for \"" + name + "\" (0 - " + to_string(maxPoints) + "): ", 0.0, maxPoints);
-            setPoints(pts);
+    void captureTodayProgress() {
+        if (isDirectScore) {
+            double points = InputReader::readDouble(
+                "  Points for \"" + taskName + "\" (0 - " + to_string(maxScore) + "): ",
+                0.0, maxScore);
+            todayScore = points;
             return;
         }
 
-        int timeSpent = InputUtility::readInt("  Time spent on \"" + name + "\" (minutes, max " + to_string(maxTime) + "): ", 0, INT_MAX);
-        calculatePoints(timeSpent);
+        int minutesSpent = InputReader::readInt(
+            "  Time spent on \"" + taskName + "\" (minutes, max " + to_string(maxMinutes) + "): ",
+            0, maxMinutes);
+
+        todayScore = (maxMinutes == 0) ? 0.0
+            : (static_cast<double>(minutesSpent) / maxMinutes) * maxScore;
     }
 
-    void calculatePoints(int timeSpent) {
-        if (maxTime <= 0) {
-            todayPoints = 0.0;
-            return;
-        }
-
-        if (timeSpent < 0)
-            timeSpent = 0;
-
-        if (timeSpent > maxTime) {
-            todayPoints = maxPoints;
-            return;
-        }
-
-        double fraction = (double)timeSpent / maxTime;
-        todayPoints = fraction * maxPoints;
-    }
-
-    void setPoints(double pts) {
-        if (pts < 0.0) pts = 0.0;
-        if (pts > maxPoints) pts = maxPoints;
-        todayPoints = pts;
-    }
-
-    double getTodayPoints() { return todayPoints; }
-    double getMaxPoints() { return maxPoints; }
-    string getName() { return name; }
-    string& getDescription() { return description; }
+    double getScore() const { return todayScore; }
+    double getMaxScore() const { return maxScore; }
+    string getName() const { return taskName; }
 };
 
-class SubSheet {
+/* =========================
+   TASK GROUP (FORMER SUBSHEET)
+   ========================= */
+class TaskGroup {
 public:
-    enum SubSheetType { DAILY_START = 0, COMPANY_WORK = 1, ONE_TIME = 2, CODING = 3, PERSONALITY = 4, ORGANISATION = 5 };
-
-public:
-
-    SubSheet(SubSheetType t) {
-        this->type = t;
-        switch (t) {
-            case DAILY_START: name = Constants::SHEET_DAILY_START; break;
-            case COMPANY_WORK: name = Constants::SHEET_COMPANY_WORK; break;
-            case ONE_TIME: name = Constants::SHEET_ONE_TIME; break;
-            case CODING: name = Constants::SHEET_CODING; break;
-            case PERSONALITY: name = Constants::SHEET_PERSONALITY; break;
-            case ORGANISATION: name = Constants::SHEET_ORGANISATION; break;
-            default: name = "UNKNOWN"; break;
-        }
-    }
-
-    void addTask(Task task) {
-        tasks.push_back(task);
-    }
-
-    string getName() { return name; }
-    SubSheetType getType() { return type; }
-
-    void setSkipOnWeekend(bool v) { skipOnWeekend = v; }
-    bool isIncludeSubSheet()  { return !(skipOnWeekend && TrackerUtility::todayIsWeekend()); }
-
-    void inputToday() {
-        cout << "\n--- " << name << " ---\n";
-        for (auto& t : tasks)
-            t.collectTodayInput();
-    }
-
-    double getTodayPoints() {
-        double sum = 0;
-        for (auto& t : tasks)
-            sum += t.getTodayPoints();
-        return sum;
-    }
-
-    double getMaxPoints() {
-        double sum = 0;
-        for (auto& t : tasks)
-            sum += t.getMaxPoints();
-        return sum;
-    }
-
-    void setTaskPointsByName(const string& taskName, double pts) {
-        for (auto& t : tasks) {
-            if (t.getName() == taskName) {
-                t.setPoints(pts);
-                return;
-            }
-        }
-    }
-
-    void printReport() {
-        cout << "\n" << name << ":\n";
-        for (auto& t : tasks) {
-            cout << "  " << t.getName();
-            if (!t.getDescription().empty())
-                cout << " (" << t.getDescription() << ")";
-            cout << " -> " << t.getTodayPoints()
-                 << "/" << t.getMaxPoints() << "\n";
-        }
-        cout << "  TOTAL: "
-             << getTodayPoints() << "/"
-             << getMaxPoints() << "\n";
-    }
+    enum class TaskType {
+        DAILY_START,
+        COMPANY_WORK,
+        ONE_TIME,
+        CODING,
+        PERSONALITY,
+        ORGANISATION
+    };
 
 private:
-    string name;
+    string groupName;
     vector<Task> tasks;
-    SubSheetType type = ONE_TIME;
     bool skipOnWeekend = false;
-};
-
-class SubSheetFactory {
-public:
-    static SubSheet createDailyStart() {
-        SubSheet s(SubSheet::DAILY_START);
-        s.addTask(Task(Constants::REVISE_DOCUMENT, 1, 5, "", true));
-        return s;
-    }
-
-    static SubSheet createCompanyWork() {
-        SubSheet s(SubSheet::COMPANY_WORK);
-        s.addTask(Task(Constants::COMPANY_WORK, 1, 50, "", true));
-        s.setSkipOnWeekend(true);
-        return s;
-    }
-
-    static SubSheet createCoding() {
-        SubSheet s(SubSheet::CODING);
-        s.addTask(Task(Constants::GFG_DAILY_CHALLENGE, 10, 5, "", false));
-        s.addTask(Task(Constants::LEETCODE_DAILY_CHALLENGE, 10, 5, "", false));
-        s.addTask(Task(Constants::REVISE_FINAL_450_SECTION, 30, 20, "", false));
-        s.addTask(Task(Constants::CF_PROBLEM_SOLVING, 30, 20, "", false));
-        return s;
-    }
-
-    static SubSheet createPersonality() {
-        SubSheet s(SubSheet::PERSONALITY);
-        s.addTask(Task(Constants::LEARN_ENGLISH, 10, 5, "", false));
-        s.addTask(Task(Constants::PUSHUPS, 10, 15, "", false));
-        s.addTask(Task(Constants::WALKING, 40, 15, "", false));
-        s.addTask(Task(Constants::HANDWRITING, 5, 5, "", false));
-        return s;
-    }
-
-    static SubSheet createOrganisation() {
-        SubSheet s(SubSheet::ORGANISATION);
-        s.addTask(Task(Constants::UPDATE_SHEET, 5, 5, "", false));
-        s.addTask(Task(Constants::LAPTOP, 10, 5, "", false));
-        s.addTask(Task(Constants::MOBILE, 10, 5, "", false));
-        s.addTask(Task(Constants::DRIVE, 10, 5, "", false));
-        s.addTask(Task(Constants::JEE, 30, 5, "", false));
-        s.addTask(Task(Constants::EMAIL_IDS, 30, 5, "", false));
-        return s;
-    }
-
-    static SubSheet createOneTime() {
-        SubSheet s(SubSheet::ONE_TIME);
-        return s;
-    }
-};
-
-class Tracker {
-    std::map<SubSheet::SubSheetType, SubSheet> sheets;
 
 public:
-    Tracker() {
-        sheets.emplace(SubSheet::DAILY_START, SubSheet(SubSheet::DAILY_START));
-        sheets.emplace(SubSheet::COMPANY_WORK, SubSheet(SubSheet::COMPANY_WORK));
-        sheets.emplace(SubSheet::ONE_TIME, SubSheet(SubSheet::ONE_TIME));
-        sheets.emplace(SubSheet::CODING, SubSheet(SubSheet::CODING));
-        sheets.emplace(SubSheet::PERSONALITY, SubSheet(SubSheet::PERSONALITY));
-        sheets.emplace(SubSheet::ORGANISATION, SubSheet(SubSheet::ORGANISATION));
-    }
-
-    void configure() {
-        sheets.insert_or_assign(SubSheet::DAILY_START, SubSheetFactory::createDailyStart());
-        sheets.insert_or_assign(SubSheet::COMPANY_WORK, SubSheetFactory::createCompanyWork());
-        sheets.insert_or_assign(SubSheet::CODING, SubSheetFactory::createCoding());
-        sheets.insert_or_assign(SubSheet::PERSONALITY, SubSheetFactory::createPersonality());
-        sheets.insert_or_assign(SubSheet::ORGANISATION, SubSheetFactory::createOrganisation());
-        sheets.insert_or_assign(SubSheet::ONE_TIME, SubSheetFactory::createOneTime());
-    }
-
-    void inputToday() {
-        for (auto &kv : sheets) {
-            auto &s = kv.second;
-            if (!s.isIncludeSubSheet()) {
-                cout << "Skipping " << s.getName() << " for today.\n";
-                continue;
-            }
-            s.inputToday();
+    TaskGroup(TaskType type) {
+        switch (type) {
+            case TaskType::DAILY_START: groupName = AppConstants::SHEET_DAILY_START; break;
+            case TaskType::COMPANY_WORK: groupName = AppConstants::SHEET_COMPANY_WORK; break;
+            case TaskType::ONE_TIME: groupName = AppConstants::SHEET_ONE_TIME; break;
+            case TaskType::CODING: groupName = AppConstants::SHEET_CODING; break;
+            case TaskType::PERSONALITY: groupName = AppConstants::SHEET_PERSONALITY; break;
+            case TaskType::ORGANISATION: groupName = AppConstants::SHEET_ORGANISATION; break;
         }
     }
 
-    void printMainReport() {
-        double total = 0.0, totalMax = 0.0;
-        cout << "\n========== MAIN SHEET ==========\n";
-        for (auto &kv : sheets) {
-            auto &s = kv.second;
-            if (!s.isIncludeSubSheet()) {
-                cout << s.getName() << ": skipped for today\n";
-                continue;
-            }
-            double pts = s.getTodayPoints();
-            double mx = s.getMaxPoints();
-            cout << s.getName() << ": " << pts << "/" << mx << "\n";
-            total += pts;
-            totalMax += mx;
-        }
+    void addTask(const Task &task) { tasks.push_back(task); }
+    void setSkipOnWeekend(bool skip) { skipOnWeekend = skip; }
 
-        cout << "\nTOTAL POINTS: " << total << "/" << totalMax << "\n";
-        if (totalMax > 0)
-            cout << "PRODUCTIVITY: " << (total / totalMax) * 100 << "%\n";
-        else
-            cout << "PRODUCTIVITY: N/A\n";
+    bool isActiveToday() const {
+        return !(skipOnWeekend && DateUtils::isWeekend());
     }
 
-    void printDetailedReport() {
-        for (auto &kv : sheets) {
-            auto &s = kv.second;
-            if (!s.isIncludeSubSheet()) {
-                cout << "\n" << s.getName() << ": skipped for today\n";
-                continue;
-            }
-            s.printReport();
+    void collectInput() {
+        cout << "\n--- " << groupName << " ---\n";
+        for (auto &task : tasks) {
+            task.captureTodayProgress();
         }
     }
 
+    double totalScore() const {
+        double sum = 0;
+        for (const auto &task : tasks) sum += task.getScore();
+        return sum;
+    }
+
+    double maxScore() const {
+        double sum = 0;
+        for (const auto &task : tasks) sum += task.getMaxScore();
+        return sum;
+    }
+
+    void printReport() const {
+        cout << "\n" << groupName << ":\n";
+        for (const auto &task : tasks) {
+            cout << "  " << task.getName() << " -> "
+                 << task.getScore() << "/" << task.getMaxScore() << "\n";
+        }
+        cout << "  TOTAL: " << totalScore() << "/" << maxScore() << "\n";
+    }
+
+    string getName() const { return groupName; }
+};
+
+/* =========================
+   TASK GROUP FACTORY
+   ========================= */
+class TaskGroupFactory {
+public:
+    static TaskGroup createDailyStart() {
+        TaskGroup group(TaskGroup::TaskType::DAILY_START);
+        group.addTask(Task(AppConstants::TASK_REVISE_DOCUMENT, 1, 5, "", true));
+        return group;
+    }
+
+    static TaskGroup createCompanyWork() {
+        TaskGroup group(TaskGroup::TaskType::COMPANY_WORK);
+        group.addTask(Task(AppConstants::TASK_COMPANY_WORK, 1, 50, "", true));
+        group.setSkipOnWeekend(true);
+        return group;
+    }
+
+    static TaskGroup createCoding() {
+        TaskGroup group(TaskGroup::TaskType::CODING);
+        group.addTask(Task(AppConstants::TASK_GFG_DAILY, 10, 5));
+        group.addTask(Task(AppConstants::TASK_LEETCODE_DAILY, 10, 5));
+        group.addTask(Task(AppConstants::TASK_FINAL_450, 30, 20));
+        group.addTask(Task(AppConstants::TASK_CODEFORCES, 30, 20));
+        return group;
+    }
+
+    static TaskGroup createPersonality() {
+        TaskGroup group(TaskGroup::TaskType::PERSONALITY);
+        group.addTask(Task(AppConstants::TASK_LEARN_ENGLISH, 10, 5));
+        group.addTask(Task(AppConstants::TASK_PUSHUPS, 10, 15));
+        group.addTask(Task(AppConstants::TASK_WALKING, 40, 15));
+        group.addTask(Task(AppConstants::TASK_HANDWRITING, 5, 5));
+        return group;
+    }
+
+    static TaskGroup createOrganisation() {
+        TaskGroup group(TaskGroup::TaskType::ORGANISATION);
+        group.addTask(Task(AppConstants::TASK_UPDATE_SHEET, 5, 5));
+        group.addTask(Task(AppConstants::TASK_LAPTOP, 10, 5));
+        group.addTask(Task(AppConstants::TASK_MOBILE, 10, 5));
+        group.addTask(Task(AppConstants::TASK_DRIVE, 10, 5));
+        group.addTask(Task(AppConstants::TASK_JEE, 30, 5));
+        group.addTask(Task(AppConstants::TASK_EMAIL_IDS, 30, 5));
+        return group;
+    }
+};
+
+/* =========================
+   MAIN TRACKER
+   ========================= */
+class ProductivityTracker {
+private:
+    map<TaskGroup::TaskType, TaskGroup> taskGroups;
+
+public:
+    ProductivityTracker() {
+        taskGroups.emplace(TaskGroup::TaskType::DAILY_START, TaskGroupFactory::createDailyStart());
+        taskGroups.emplace(TaskGroup::TaskType::COMPANY_WORK, TaskGroupFactory::createCompanyWork());
+        taskGroups.emplace(TaskGroup::TaskType::CODING, TaskGroupFactory::createCoding());
+        taskGroups.emplace(TaskGroup::TaskType::PERSONALITY, TaskGroupFactory::createPersonality());
+        taskGroups.emplace(TaskGroup::TaskType::ORGANISATION, TaskGroupFactory::createOrganisation());
+    }
+
+    void collectTodayData() {
+        for (auto &[type, group] : taskGroups) {
+            if (!group.isActiveToday()) {
+                cout << "Skipping " << group.getName() << " today.\n";
+                continue;
+            }
+            group.collectInput();
+        }
+    }
+
+    void printSummary() const {
+        double total = 0, maxTotal = 0;
+        cout << "\n========== DAILY SUMMARY ==========" << endl;
+        for (const auto &[type, group] : taskGroups) {
+            if (!group.isActiveToday()) continue;
+            total += group.totalScore();
+            maxTotal += group.maxScore();
+            cout << group.getName() << ": "
+                 << group.totalScore() << "/" << group.maxScore() << endl;
+        }
+        cout << "\nTOTAL SCORE: " << total << "/" << maxTotal << endl;
+        cout << "PRODUCTIVITY: " << (maxTotal ? (total / maxTotal) * 100 : 0) << "%" << endl;
+    }
+
+    void printDetailedReport() const {
+        for (const auto &[type, group] : taskGroups) {
+            if (group.isActiveToday()) group.printReport();
+        }
+    }
 };
 
 int main() {
-    Tracker tracker;
-    tracker.configure();
-    tracker.inputToday();
+    ProductivityTracker tracker;
+    tracker.collectTodayData();
     tracker.printDetailedReport();
-    tracker.printMainReport();
+    tracker.printSummary();
     return 0;
 }
 
-// Run Tracker.cpp : 
-// Command 1 : g++ -std=c++17 -O2 -g Tracker.cpp -o Tracker
-// Command 2 : ./Tracker
+// Build:
+// g++ -std=c++17 -O2 ProductivityTracker.cpp -o tracker
+// Run:
+// ./tracker
