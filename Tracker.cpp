@@ -4,7 +4,8 @@ using namespace std;
 /* =========================
    CONSTANT DEFINITIONS
    ========================= */
-class AppConstants {
+class AppConstants
+{
 public:
     // Task Names
     static inline const string TASK_REVISE_DOCUMENT = "REVISE DOCUMENT";
@@ -36,13 +37,17 @@ public:
 /* =========================
    INPUT UTILITIES
    ========================= */
-class InputReader {
+class InputReader
+{
 public:
-    static int readInt(const string &prompt, int minValue = INT_MIN, int maxValue = INT_MAX) {
-        while (true) {
+    static int readInt(const string &prompt, int minValue = INT_MIN, int maxValue = INT_MAX)
+    {
+        while (true)
+        {
             cout << prompt;
             int value;
-            if (cin >> value) {
+            if (cin >> value)
+            {
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 return max(minValue, min(value, maxValue));
             }
@@ -52,11 +57,14 @@ public:
         }
     }
 
-    static double readDouble(const string &prompt, double minValue, double maxValue) {
-        while (true) {
+    static double readDouble(const string &prompt, double minValue, double maxValue)
+    {
+        while (true)
+        {
             cout << prompt;
             double value;
-            if (cin >> value) {
+            if (cin >> value)
+            {
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 return max(minValue, min(value, maxValue));
             }
@@ -70,9 +78,11 @@ public:
 /* =========================
    DATE / TIME UTILITIES
    ========================= */
-class DateUtils {
+class DateUtils
+{
 public:
-    static bool isWeekend() {
+    static bool isWeekend()
+    {
         time_t now = time(nullptr);
         tm *localTime = localtime(&now);
         return localTime->tm_wday == 0 || localTime->tm_wday == 6;
@@ -82,7 +92,8 @@ public:
 /* =========================
    TASK MODEL
    ========================= */
-class Task {
+class Task
+{
 private:
     string taskName;
     string taskDescription;
@@ -96,8 +107,10 @@ public:
         : taskName(name), taskDescription(desc), maxMinutes(maxTime),
           maxScore(maxPoints), todayScore(0.0), isDirectScore(direct) {}
 
-    void captureTodayProgress() {
-        if (isDirectScore) {
+    void captureTodayProgress()
+    {
+        if (isDirectScore)
+        {
             double points = InputReader::readDouble(
                 "  Points for \"" + taskName + "\" (0 - " + to_string(maxScore) + "): ",
                 0.0, maxScore);
@@ -110,7 +123,7 @@ public:
             0, maxMinutes);
 
         todayScore = (maxMinutes == 0) ? 0.0
-            : (static_cast<double>(minutesSpent) / maxMinutes) * maxScore;
+                                       : (static_cast<double>(minutesSpent) / maxMinutes) * maxScore;
     }
 
     double getScore() const { return todayScore; }
@@ -121,9 +134,11 @@ public:
 /* =========================
    TASK GROUP (FORMER SUBSHEET)
    ========================= */
-class TaskGroup {
+class TaskGroup
+{
 public:
-    enum class TaskType {
+    enum class TaskType
+    {
         DAILY_START,
         COMPANY_WORK,
         ONE_TIME,
@@ -138,46 +153,70 @@ private:
     bool skipOnWeekend = false;
 
 public:
-    TaskGroup(TaskType type) {
-        switch (type) {
-            case TaskType::DAILY_START: groupName = AppConstants::SHEET_DAILY_START; break;
-            case TaskType::COMPANY_WORK: groupName = AppConstants::SHEET_COMPANY_WORK; break;
-            case TaskType::ONE_TIME: groupName = AppConstants::SHEET_ONE_TIME; break;
-            case TaskType::CODING: groupName = AppConstants::SHEET_CODING; break;
-            case TaskType::PERSONALITY: groupName = AppConstants::SHEET_PERSONALITY; break;
-            case TaskType::ORGANISATION: groupName = AppConstants::SHEET_ORGANISATION; break;
+    TaskGroup(TaskType type)
+    {
+        switch (type)
+        {
+        case TaskType::DAILY_START:
+            groupName = AppConstants::SHEET_DAILY_START;
+            break;
+        case TaskType::COMPANY_WORK:
+            groupName = AppConstants::SHEET_COMPANY_WORK;
+            break;
+        case TaskType::ONE_TIME:
+            groupName = AppConstants::SHEET_ONE_TIME;
+            break;
+        case TaskType::CODING:
+            groupName = AppConstants::SHEET_CODING;
+            break;
+        case TaskType::PERSONALITY:
+            groupName = AppConstants::SHEET_PERSONALITY;
+            break;
+        case TaskType::ORGANISATION:
+            groupName = AppConstants::SHEET_ORGANISATION;
+            break;
         }
     }
 
     void addTask(const Task &task) { tasks.push_back(task); }
     void setSkipOnWeekend(bool skip) { skipOnWeekend = skip; }
 
-    bool isActiveToday() const {
+    bool isActiveToday() const
+    {
         return !(skipOnWeekend && DateUtils::isWeekend());
     }
 
-    void collectInput() {
+    void collectInput()
+    {
         cout << "\n--- " << groupName << " ---\n";
-        for (auto &task : tasks) {
+        for (auto &task : tasks)
+        {
             task.captureTodayProgress();
         }
     }
 
-    double totalScore() const {
+    double totalScore() const
+    {
         double sum = 0;
-        for (const auto &task : tasks) sum += task.getScore();
+        for (const auto &task : tasks)
+            sum += task.getScore();
         return sum;
     }
 
-    double maxScore() const {
+    double maxScore() const
+    {
         double sum = 0;
-        for (const auto &task : tasks) sum += task.getMaxScore();
+        for (const auto &task : tasks)
+            sum += task.getMaxScore();
         return sum;
     }
 
-    void printReport() const {
-        cout << "\n" << groupName << ":\n";
-        for (const auto &task : tasks) {
+    void printReport() const
+    {
+        cout << "\n"
+             << groupName << ":\n";
+        for (const auto &task : tasks)
+        {
             cout << "  " << task.getName() << " -> "
                  << task.getScore() << "/" << task.getMaxScore() << "\n";
         }
@@ -190,22 +229,26 @@ public:
 /* =========================
    TASK GROUP FACTORY
    ========================= */
-class TaskGroupFactory {
+class TaskGroupFactory
+{
 public:
-    static TaskGroup createDailyStart() {
+    static TaskGroup createDailyStart()
+    {
         TaskGroup group(TaskGroup::TaskType::DAILY_START);
         group.addTask(Task(AppConstants::TASK_REVISE_DOCUMENT, 1, 5, "", true));
         return group;
     }
 
-    static TaskGroup createCompanyWork() {
+    static TaskGroup createCompanyWork()
+    {
         TaskGroup group(TaskGroup::TaskType::COMPANY_WORK);
         group.addTask(Task(AppConstants::TASK_COMPANY_WORK, 1, 50, "", true));
         group.setSkipOnWeekend(true);
         return group;
     }
 
-    static TaskGroup createCoding() {
+    static TaskGroup createCoding()
+    {
         TaskGroup group(TaskGroup::TaskType::CODING);
         group.addTask(Task(AppConstants::TASK_GFG_DAILY, 10, 5));
         group.addTask(Task(AppConstants::TASK_LEETCODE_DAILY, 10, 5));
@@ -214,7 +257,8 @@ public:
         return group;
     }
 
-    static TaskGroup createPersonality() {
+    static TaskGroup createPersonality()
+    {
         TaskGroup group(TaskGroup::TaskType::PERSONALITY);
         group.addTask(Task(AppConstants::TASK_LEARN_ENGLISH, 10, 5));
         group.addTask(Task(AppConstants::TASK_PUSHUPS, 10, 15));
@@ -223,7 +267,8 @@ public:
         return group;
     }
 
-    static TaskGroup createOrganisation() {
+    static TaskGroup createOrganisation()
+    {
         TaskGroup group(TaskGroup::TaskType::ORGANISATION);
         group.addTask(Task(AppConstants::TASK_UPDATE_SHEET, 5, 5));
         group.addTask(Task(AppConstants::TASK_LAPTOP, 10, 5));
@@ -238,12 +283,14 @@ public:
 /* =========================
    MAIN TRACKER
    ========================= */
-class ProductivityTracker {
+class ProductivityTracker
+{
 private:
     map<TaskGroup::TaskType, TaskGroup> taskGroups;
 
 public:
-    ProductivityTracker() {
+    ProductivityTracker()
+    {
         taskGroups.emplace(TaskGroup::TaskType::DAILY_START, TaskGroupFactory::createDailyStart());
         taskGroups.emplace(TaskGroup::TaskType::COMPANY_WORK, TaskGroupFactory::createCompanyWork());
         taskGroups.emplace(TaskGroup::TaskType::CODING, TaskGroupFactory::createCoding());
@@ -251,9 +298,12 @@ public:
         taskGroups.emplace(TaskGroup::TaskType::ORGANISATION, TaskGroupFactory::createOrganisation());
     }
 
-    void collectTodayData() {
-        for (auto &[type, group] : taskGroups) {
-            if (!group.isActiveToday()) {
+    void collectTodayData()
+    {
+        for (auto &[type, group] : taskGroups)
+        {
+            if (!group.isActiveToday())
+            {
                 cout << "Skipping " << group.getName() << " today.\n";
                 continue;
             }
@@ -261,11 +311,14 @@ public:
         }
     }
 
-    void printSummary() const {
+    void printSummary() const
+    {
         double total = 0, maxTotal = 0;
         cout << "\n========== DAILY SUMMARY ==========" << endl;
-        for (const auto &[type, group] : taskGroups) {
-            if (!group.isActiveToday()) continue;
+        for (const auto &[type, group] : taskGroups)
+        {
+            if (!group.isActiveToday())
+                continue;
             total += group.totalScore();
             maxTotal += group.maxScore();
             cout << group.getName() << ": "
@@ -275,14 +328,18 @@ public:
         cout << "PRODUCTIVITY: " << (maxTotal ? (total / maxTotal) * 100 : 0) << "%" << endl;
     }
 
-    void printDetailedReport() const {
-        for (const auto &[type, group] : taskGroups) {
-            if (group.isActiveToday()) group.printReport();
+    void printDetailedReport() const
+    {
+        for (const auto &[type, group] : taskGroups)
+        {
+            if (group.isActiveToday())
+                group.printReport();
         }
     }
 };
 
-int main() {
+int main()
+{
     ProductivityTracker tracker;
     tracker.collectTodayData();
     tracker.printDetailedReport();
@@ -291,6 +348,6 @@ int main() {
 }
 
 // Build:
-// g++ -std=c++17 -O2 ProductivityTracker.cpp -o tracker
+// g++  Tracker.cpp -o tracker
 // Run:
 // ./tracker
